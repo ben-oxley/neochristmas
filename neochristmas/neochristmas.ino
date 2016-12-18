@@ -44,10 +44,10 @@ void loop() {
 //  theaterChase(strip.Color(127, 127, 127), 50); // White
 //  theaterChase(strip.Color(127, 0, 0), 50); // Red
 //  theaterChase(strip.Color(0, 0, 127), 50); // Blue
-
+rainbowchase(10);
 //  rainbow(20);
   //rainbowCycle(20);
-  theaterChaseRainbow(50);
+  //theaterChaseRainbow(50);
 }
 
 // Fill the dots one after the other with a color
@@ -70,6 +70,23 @@ void rainbow(uint8_t wait) {
     delay(wait);
   }
 }
+
+void rainbowchase(uint8_t wait) {
+  uint16_t i, j, k;
+
+  for(j=0; j<256; j++) {
+    for(i=0; i<strip.numPixels(); i++) {
+      if (i != k){
+        strip.setPixelColor(i, Wheel((i+j) & 255));
+      } else {
+        strip.setPixelColor(i,255,255,255);
+      }
+    }
+    strip.show();
+    delay(wait);
+    k++;
+  }
+} 
 
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle(uint8_t wait) {
@@ -163,4 +180,19 @@ uint32_t Wheel(byte WheelPos) {
   }
   WheelPos -= 170;
   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos, byte brightness) {
+  WheelPos = 255 - WheelPos;
+  if(WheelPos < 85) {
+    return strip.Color((255 - WheelPos * 3)*brightness , 0, WheelPos * 3 * brightness);
+  }
+  if(WheelPos < 170) {
+    WheelPos -= 85;
+    return strip.Color(0, (WheelPos * 3)* brightness, (255 - WheelPos * 3) * brightness);
+  }
+  WheelPos -= 170;
+  return strip.Color((WheelPos * 3)* brightness, (255 - WheelPos * 3)* brightness, 0);
 }
